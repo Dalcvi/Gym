@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+* {
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.content-header {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 48px;
+}
+
+.grid {
+  display: grid;
+  max-width: 1080px;
+  width: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 24px;
+  row-gap: 48px;
+  list-style-type: none;
+  margin: 24px 12px 48px 12px;
+  margin-top: 24px;
+  margin-bottom: 48px;
+}
+
+.trainer__container {
+  width: 100%;
+  border: 1px solid black;
+}
+
+.header__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.trainer__content {
+  border-top: 1px solid black;
+  padding: 18px 12px;
+}
+
+.trainer__name {
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.trainer__qualifications {
+  font-size: 18px;
+  margin-top: 24px;
+}
+
+.divider {
+  width: 100%;
+  border: 1px solid black;
+}
+
+.qualities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0 0 12px;
+}
+
+.qualities-list__item {
+  font-size: 16px;
+}
+
+.button {
+  display: block;
+  text-align: center;
+  margin-top: 36px;
+  width: 100%;
+  padding: 12px;
+  background-color: rgb(74, 226, 175);
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: black;
+}
+
+.button:hover {
+  background-color: rgb(0, 243, 162);
+  cursor: pointer;
+}

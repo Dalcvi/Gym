@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+* {
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  --hour-height: 50px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.user-info {
+  max-width: 1080px;
+  margin: 18px 12px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.user-info__image-container {
+  width: 300px;
+}
+
+.user-info__image {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+.user-info__username {
+  font-size: 36px;
+}
+
+.calendar {
+  margin-top: 36px;
+  display: flex;
+
+  max-width: 1080px;
+  width: 100%;
+  position: relative;
+}
+
+.calendar__days {
+  width: 100%;
+  display: flex;
+  list-style-type: none;
+}
+
+.calendar__day {
+  width: 100%;
+  border: 2px solid black;
+  border-top: none;
+  position: relative;
+}
+
+.calendar__day:not(:nth-child(1)) {
+  border-left: none;
+}
+
+.calendar__day:nth-child(2n-1) {
+  background-color: rgb(208, 225, 236);
+}
+
+.calendar__hours {
+  width: 100%;
+  list-style-type: none;
+}
+
+.calendar__hour {
+  border-top: 2px solid black;
+  height: var(--hour-height);
+  width: 100%;
+}
+
+.calendar-aside {
+  list-style-type: none;
+  width: calc(100% / 16);
+  height: var(--hour-height);
+}
+
+.calendar-aside__hour {
+  height: var(--hour-height);
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 12px;
+  font-size: 18px;
+  /* font-weight: bold; */
+  color: rgb(43, 43, 43);
+}
+
+.calendar__unavailable-time {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+}
+
+.calendar__unavailable-time::after {
+  content: 'Unavailable';
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  font-size: 16px;
+  color: rgb(255, 90, 104);
+}
+
+.booking {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 12px;
+}
+
+.time-picker-button {
+  background-color: rgb(74, 226, 175);
+  color: black;
+  padding: 6px 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.time-picker-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.time-picker-button:hover {
+  background-color: rgb(0, 243, 162);
+  cursor: pointer;
+}

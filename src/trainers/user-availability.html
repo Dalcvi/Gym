@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../header.css" />
+    <link rel="stylesheet" href="./user-availability.css" />
+    <script src="./index.js" defer></script>
+    <title>Michael Scott Availability | HG</title>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__container">
+        <h1 class="header__title">HabibiGym</h1>
+        <nav class="navigation">
+          <ul class="navigation__list">
+            <li>
+              <a href="../" class="navigation__link">Home</a>
+            </li>
+            <li>
+              <a class="navigation__link" href="../locations.html">Locations</a>
+            </li>
+            <li>
+              <a class="navigation__link navigation__link--active" href="../trainers.html"
+                >Trainers</a
+              >
+            </li>
+            <li>
+              <a class="navigation__link" href="../index.html#pricing">Pricing</a>
+            </li>
+            <li>
+              <a class="navigation__link" href="../register.html">Join us!</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main class="container">
+      <header class="user-info">
+        <div class="user-info__image-container">
+          <img src="../../public/trainer.jpg" class="user-info__image" />
+        </div>
+        <h2 class="user-info__username">Michael Scott availability</h2>
+      </header>
+      <section class="booking">
+        <form class="time-picker-form">
+          <label for="date"> Book a time: </label>
+          <input id="date" type="date" className="time-picker" />
+          <input type="time" className="time-picker" />
+          <button type="submit" class="time-picker-button">BOOK</button>
+        </form>
+      </section>
+      <section class="calendar"></section>
+    </main>
+  </body>
+</html>

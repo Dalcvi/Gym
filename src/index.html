@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./header.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./modal.css" />
+    <link rel="stylesheet" href="./sign-form.css" />
+
+    <script type="module" src="./js/app.js"></script>
+    <title>Home | HG</title>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__container">
+        <h1 class="header__title">HabibiGym</h1>
+        <nav class="navigation">
+          <ul class="navigation__list">
+            <li>
+              <a href="./" class="navigation__link navigation__link--active">Home</a>
+            </li>
+            <li>
+              <a class="navigation__link" href="./locations.html">Locations</a>
+            </li>
+            <li>
+              <a class="navigation__link" href="./trainers.html">Trainers</a>
+            </li>
+            <li>
+              <a class="navigation__link" href="#pricing">Pricing</a>
+            </li>
+            <li>
+              <button id="join-button" class="navigation__button">Join us!</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="introduction">
+        <div class="introduction__content">
+          <h2 class="introduction__title">Better than everyone</h2>
+          <p class="introduction__subtitle">And we aren't even lying</p>
+          <button id="join-now-button" class="introduction__button">Join Now</button>
+        </div>
+      </section>
+      <section class="pricing" id="pricing">
+        <header class="pricing__header">
+          <h2 class="pricing__title">Pricing</h2>
+        </header>
+        <ul class="pricing__list">
+          <li class="pricing__list-item">
+            <header class="pricing-item__header">
+              <h3 class="pricing-item__title">MINI</h3>
+            </header>
+            <ul class="pricing-perks">
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Available 24/7
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Free water
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--not-checked"
+                  >&minus;</span
+                >
+                Zoomba
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--not-checked"
+                  >&minus;</span
+                >
+                Group sessions
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--not-checked"
+                  >&minus;</span
+                >
+                Sauna
+              </li>
+            </ul>
+          </li>
+          <li class="pricing__list-item">
+            <header class="pricing-item__header">
+              <h3 class="pricing-item__title">MIDI</h3>
+            </header>
+            <ul class="pricing-perks">
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Available 24/7
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Free water
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Zoomba
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--not-checked"
+                  >&minus;</span
+                >
+                Group sessions
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--not-checked"
+                  >&minus;</span
+                >
+                Sauna
+              </li>
+            </ul>
+          </li>
+          <li class="pricing__list-item">
+            <header class="pricing-item__header">
+              <h3 class="pricing-item__title">MAXI</h3>
+            </header>
+            <ul class="pricing-perks">
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Available 24/7
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Free water
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Zoomba
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Group sessions
+              </li>
+              <li class="pricing-perk">
+                <span class="pricing-perk__checkmark pricing-perk__checkmark--checked">&plus;</span>
+                Sauna
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <template id="sign-up-template">
+          <div class="modal__container">
+        <header class="modal__header">
+        <h2>Sign Up</h2>
+        <button class="modal__close">&times;</button>
+        </header>
+      </header>
+      <form class="sign-form">
+        <label class="sign-form__label">
+          Email:
+          <input type="text" class="sign-form__input" placeholder="name@mail.com" />
+        </label>
+        <label class="sign-form__label">
+          First Name:
+          <input type="text" class="sign-form__input" />
+        </label>
+        <label class="sign-form__label">
+          Last Name:
+          <input type="text" class="sign-form__input" />
+        </label>
+        <label class="sign-form__label">
+          Password:
+          <input type="password" class="sign-form__input" />
+        </label>
+        <label class="sign-form__label">
+          Age:
+          <input type="number" class="sign-form__input" />
+        </label>
+        <footer>
+          <button type="submit" class="sign_form__submit">SIGN UP</button>
+        </footer>
+      </form>
+      <footer class="modal__footer">
+        Already have an account?
+        <a href="#" class="modal__link">Sign in</a>
+      </footer>
+    </div>
+    </template>
+        <template id="sign-in-template">
+          <div class="modal__container">
+        <header class="modal__header">
+        <h2>Sign In</h2>
+        <button class="modal__close">&times;</button>
+        </header>
+      </header>
+      <form class="sign-form">
+        <label class="sign-form__label">
+          Email:
+          <input type="text" class="sign-form__input" placeholder="name@mail.com" />
+        </label>
+        <label class="sign-form__label">
+          Password:
+          <input type="password" class="sign-form__input" />
+        </label>
+        <footer>
+          <button type="submit" class="sign_form__submit">SIGN IN</button>
+        </footer>
+      </form>
+      <footer class="modal__footer">
+        Don't have an account?
+        <a href="#" class="modal__link">Sign up</a>
+      </footer>
+    </div>
+    </template>
+  </body>
+</html>
