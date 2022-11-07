@@ -21,6 +21,8 @@ export const NavBar = () => {
           Locations
         </Navbar.Link>
         <Navbar.Link href="/trainers">Trainers</Navbar.Link>
+        <Navbar.Link href="/admin-dashboard">Admin</Navbar.Link>
+
         <Navbar.Link href="#pricing">Pricing</Navbar.Link>
         <Navbar.Item>
           <Text>Join us!</Text>
