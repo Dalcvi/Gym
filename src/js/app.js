@@ -15,4 +15,8 @@ import { SignFormFactory } from './sign-form.js';
       return signFormFactory.createSignUpForm(close, openModal);
     });
   });
+  const pricingEl = document.querySelector('#pricing');
+  pricingEl.scrollIntoView({
+    behavior: 'smooth',
+  });
 })();
