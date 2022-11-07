@@ -1,16 +1,11 @@
-import classes from './home-page.module.scss';
-import { Button, Text } from '@nextui-org/react';
+import { PricingSection } from './pricing-section';
+import { UserGreeting } from './user-greeting';
 
 export const HomePage = () => {
   return (
-    <div className={classes.background}>
-      <div className={classes.textContainer}>
-        <Text h2 b css={{ mb: '0' }}>
-          Better than everyone
-        </Text>
-        <Text>And we aren't even lying</Text>
-        <Button></Button>
-      </div>
-    </div>
+    <>
+      <UserGreeting />
+      <PricingSection />
+    </>
   );
 };
