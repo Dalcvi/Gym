@@ -1,5 +1,7 @@
 ﻿using GymApi.Context;
+using GymApi.Dtos;
 using GymApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,15 +19,19 @@ namespace GymApi.Controllers
         }
 
         // GET: api/Users
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GymUser>>> GetGymUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetGymUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+
+            return Ok(users.Select(user => user.MapToDto()));
         }
 
         // GET: api/Users/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<ActionResult<GymUser>> GetGymUser(string id)
+        public async Task<ActionResult<UserDto>> GetGymUser(string id)
         {
             var gymUser = await _context.GymUsers.FindAsync(id);
 
@@ -34,7 +40,7 @@ namespace GymApi.Controllers
                 return NotFound();
             }
 
-            return gymUser;
+            return Ok(gymUser.MapToDto());
         }
 
         // PUT: api/Users/5

@@ -13,6 +13,7 @@ namespace GymApi.Context
         public DbSet<Benefit> Benefits { get; set; }
         public DbSet<PlanBenefit> PlanBenefits { get; set; }
         public DbSet<GymUser> GymUsers { get; set; }
+        public DbSet<UserBooking> UserBookings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -22,6 +23,7 @@ namespace GymApi.Context
 
             optionsBuilder.UseMySql(configuration["ConnectionStrings:DatabaseConnectionString"], new MySqlServerVersion(new Version(1, 0, 0)));
         }
+
     }
 }
 

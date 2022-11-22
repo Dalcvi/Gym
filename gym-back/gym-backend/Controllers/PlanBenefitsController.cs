@@ -1,11 +1,13 @@
 ﻿using GymApi.Context;
+using GymApi.Dtos;
 using GymApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymApi.Controllers
 {
-    [Route("api/plans-benefits")]
+    [Route("api/plans/{planId}/benefits")]
     [ApiController]
     public class PlanBenefitsController : ControllerBase
     {
@@ -16,74 +18,33 @@ namespace GymApi.Controllers
             _context = context;
         }
 
-        // GET: api/PlanBenefits
+        // GET: api/plans/5/benefits
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PlanBenefit>>> GetPlanBenefits()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<BenefitDto>>> GetPlanBenefits(int planId)
         {
-            return await _context.PlanBenefits.ToListAsync();
+            var planBenefits = await _context.PlanBenefits.Where(planBenefit => planBenefit.PlanId == planId).Include(planBenefit => planBenefit.Benefit).ToListAsync();
+
+            return Ok(planBenefits.Select(planBenefit => planBenefit.Benefit.MapToDto()));
         }
 
-        // GET: api/PlanBenefits/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PlanBenefit>> GetPlanBenefit(int id)
-        {
-            var planBenefit = await _context.PlanBenefits.FindAsync(id);
-
-            if (planBenefit == null)
-            {
-                return NotFound();
-            }
-
-            return planBenefit;
-        }
-
-        // PUT: api/PlanBenefits/5
+        // POST: api/plans/5/benefits/3
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPlanBenefit(int id, PlanBenefit planBenefit)
+        [HttpPost("{benefitId}")]
+        public async Task<ActionResult<PlanBenefit>> PostPlanBenefit(int planId, int benefitId)
         {
-            if (id != planBenefit.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(planBenefit).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PlanBenefitExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.PlanBenefits.Add(new PlanBenefit() { PlanId = planId, BenefitId = benefitId });
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/PlanBenefits
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<PlanBenefit>> PostPlanBenefit(PlanBenefit planBenefit)
-        {
-            _context.PlanBenefits.Add(planBenefit);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPlanBenefit", new { id = planBenefit.Id }, planBenefit);
-        }
-
-        // DELETE: api/PlanBenefits/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePlanBenefit(int id)
+        // DELETE: api/plans/5/benefits/5
+        [HttpDelete("{benefitId}")]
+        public async Task<IActionResult> DeletePlanBenefit(int planId, int benefitId)
         {
-            var planBenefit = await _context.PlanBenefits.FindAsync(id);
+            var planBenefit = await _context.PlanBenefits.FindAsync(planId, benefitId);
             if (planBenefit == null)
             {
                 return NotFound();
@@ -93,11 +54,6 @@ namespace GymApi.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool PlanBenefitExists(int id)
-        {
-            return _context.PlanBenefits.Any(e => e.Id == id);
         }
     }
 }

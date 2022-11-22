@@ -1,10 +1,19 @@
 import { Loading, Table, Text } from '@nextui-org/react';
 import { useQuery } from 'react-query';
+import { useOutletContext } from 'react-router-dom';
+import { AdminDashboardContext } from '../admin-dashboard-context.types';
 import { Plan } from './plans-table.types';
 
 export const PlansTable = () => {
+  const { accessToken } = useOutletContext<AdminDashboardContext>();
   const plansQuery = useQuery<Plan[]>('plans', async () => {
-    const plans = await (await fetch('https://localhost:7030/api/plans')).json();
+    const plans = await (
+      await fetch('https://localhost:7030/api/plans', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+    ).json();
     return plans as Plan[];
   });
 

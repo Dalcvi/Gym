@@ -1,0 +1,1 @@
+export * from './gym-trainers-table.component';

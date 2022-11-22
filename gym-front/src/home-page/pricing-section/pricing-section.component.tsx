@@ -7,7 +7,7 @@ export const PricingSection = () => {
   const allBenefits = ['Dining', 'Mining', 'Flying', 'Grinding'];
 
   return (
-    <section>
+    <section id="pricing">
       <Container css={{ height: `100vh` }}>
         <Row justify="center" align="center" css={{ pt: `${48 + 76}px` }}>
           <header>

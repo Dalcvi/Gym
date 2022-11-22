@@ -2,6 +2,7 @@ using GymApi.Auth;
 using GymApi.Context;
 using GymApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -19,7 +20,7 @@ appBuilder.Services.AddCors(options =>
     options.AddPolicy(name: "SpecificOrigin",
                       builder =>
                       {
-                          builder.WithOrigins("http://localhost:3000");
+                          builder.WithOrigins("http://localhost:3000").AllowAnyHeader();
                       });
 });
 
@@ -45,8 +46,19 @@ appBuilder.Services.AddAuthentication(options =>
     options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appBuilder.Configuration["JWT:Secret"]));
 });
 
+appBuilder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireNonAlphanumeric = false;
+});
+
 appBuilder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
 appBuilder.Services.AddScoped<AuthDbSeeder>();
+
+appBuilder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Policies.ContentOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
+});
+appBuilder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
 
 appBuilder.Services.AddSwaggerGen(swagger =>
 {

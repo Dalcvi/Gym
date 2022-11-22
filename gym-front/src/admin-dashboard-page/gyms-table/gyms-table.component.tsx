@@ -1,10 +1,19 @@
 import { Loading, Table, Text } from '@nextui-org/react';
 import { useQuery } from 'react-query';
+import { useOutletContext } from 'react-router-dom';
+import { AdminDashboardContext } from '../admin-dashboard-context.types';
 import { Gym } from './gyms-table.types';
 
 export const GymsTable = () => {
+  const { accessToken } = useOutletContext<AdminDashboardContext>();
   const gymsQuery = useQuery<Gym[]>('gyms', async () => {
-    const gyms = await (await fetch('https://localhost:7030/api/gyms')).json();
+    const gyms = await (
+      await fetch('https://localhost:7030/api/gyms', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+    ).json();
     return gyms as Gym[];
   });
 

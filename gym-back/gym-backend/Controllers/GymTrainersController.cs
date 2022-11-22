@@ -1,5 +1,7 @@
 ﻿using GymApi.Context;
+using GymApi.Dtos;
 using GymApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,34 +20,24 @@ namespace GymApi.Controllers
 
         // GET: api/gyms/5/trainers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GymTrainer>>> GetGymTrainers(int gymId)
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetGymTrainers(int gymId)
         {
-            return await _context.GymTrainers.Where((i) => i.GymId == gymId).ToListAsync();
-        }
+            var gymTrainers = await _context.GymTrainers.Where((g) => g.GymId == gymId).Include(g => g.User).ToListAsync();
 
-        // GET: api/gyms/5/trainers/2
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<GymTrainer>> GetGymTrainer(int gymId, string userId)
-        {
-            var gymTrainer = await _context.GymTrainers.FirstOrDefaultAsync((i) => i.UserId == userId && i.GymId == gymId);
-
-            if (gymTrainer == null)
-            {
-                return NotFound();
-            }
-
-            return gymTrainer;
+            return Ok(gymTrainers.Select(g => g.User.MapToDto()));
         }
 
         // POST: api/gyms/5/trainers/2
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("{userId}")]
-        public async Task<ActionResult<GymTrainer>> PostGymTrainer(GymTrainer gymTrainer)
+        [AllowAnonymous]
+        public async Task<ActionResult<GymTrainer>> PostGymTrainer(int gymId, string userId)
         {
-            _context.GymTrainers.Add(gymTrainer);
+            _context.GymTrainers.Add(new GymTrainer() { GymId = gymId, UserId = userId });
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetGymTrainer", new { id = gymTrainer.Id }, gymTrainer);
+            return NoContent();
         }
 
         // DELETE: api/gyms/5/trainers/2
@@ -62,11 +54,6 @@ namespace GymApi.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool GymTrainerExists(int id)
-        {
-            return _context.GymTrainers.Any(e => e.Id == id);
         }
     }
 }

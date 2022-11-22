@@ -1,8 +1,11 @@
-﻿using GymApi.Context;
+﻿using GymApi.Auth;
+using GymApi.Context;
 using GymApi.Dtos;
 using GymApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace GymApi.Controllers
 {
@@ -11,24 +14,29 @@ namespace GymApi.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly GymDbContext _context;
+        private readonly IAuthorizationService authorizationService;
 
-        public BookingsController(GymDbContext context)
+
+        public BookingsController(GymDbContext context, IAuthorizationService authorizationService)
         {
             _context = context;
+            this.authorizationService = authorizationService;
         }
 
         // GET: api/Bookings
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
-            return await _context.Bookings.ToListAsync();
+            return await _context.Bookings.Include(booking => booking.Client).Include(booking => booking.Trainer).ToListAsync();
         }
 
         // GET: api/Bookings/5
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<ActionResult<Booking>> GetBooking(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = await _context.Bookings.Include(booking => booking.Client).Include(booking => booking.Trainer).FirstOrDefaultAsync(booking => booking.Id == id);
 
             if (booking == null)
             {
@@ -41,14 +49,18 @@ namespace GymApi.Controllers
         // PUT: api/Bookings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(int id, Booking booking)
+        [Authorize(Roles = Roles.User)]
+        public async Task<IActionResult> PutBooking(int id, UpdateBookingDto bookingUpdate)
         {
-            if (id != booking.Id)
+            var booking = _context.Bookings.Find(id);
+
+            var authResult = await authorizationService.AuthorizeAsync(User, booking, Policies.ContentOwner);
+            if (!authResult.Succeeded)
             {
-                return BadRequest();
+                return Forbid();
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
+            _context.Entry(bookingUpdate).State = EntityState.Modified;
 
             try
             {
@@ -72,6 +84,7 @@ namespace GymApi.Controllers
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<Booking>> PostBooking(CreateBookingDto booking)
         {
             var client = await _context.Users.FirstOrDefaultAsync((user) => user.Id == booking.ClientId);
@@ -81,9 +94,17 @@ namespace GymApi.Controllers
             if (trainer == null)
                 NotFound();
 
+            var requestUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!(requestUserId == booking.ClientId || requestUserId == booking.TrainerId))
+            {
+                Forbid();
+            }
+
 
             var newBooking = new Booking() { Client = client, Trainer = trainer, DateFrom = booking.DateFrom, DateTo = booking.DateTo };
             _context.Bookings.Add(newBooking);
+            _context.UserBookings.Add(new UserBooking() { User = client, Booking = newBooking });
+            _context.UserBookings.Add(new UserBooking() { User = trainer, Booking = newBooking });
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetBooking", new { id = newBooking.Id }, newBooking);
@@ -99,7 +120,12 @@ namespace GymApi.Controllers
                 return NotFound();
             }
 
-            _context.Bookings.Remove(booking);
+            var authResult = await authorizationService.AuthorizeAsync(User, booking, Policies.ContentOwner);
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             await _context.SaveChangesAsync();
 
             return NoContent();

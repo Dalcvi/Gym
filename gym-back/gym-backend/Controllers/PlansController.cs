@@ -1,6 +1,7 @@
 ﻿using GymApi.Context;
 using GymApi.Dtos;
 using GymApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,8 @@ namespace GymApi.Controllers
 
         // GET: api/Plans
         [HttpGet]
+        [AllowAnonymous]
+
         public async Task<ActionResult<IEnumerable<Plan>>> GetPlans()
         {
             return await _context.Plans.ToListAsync();
@@ -26,6 +29,7 @@ namespace GymApi.Controllers
 
         // GET: api/Plans/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Plan>> GetPlan(int id)
         {
             var plan = await _context.Plans.FindAsync(id);

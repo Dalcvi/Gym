@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using GymApi.Dtos;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GymApi.Models
 {
-    public class Booking
+    public class Booking : IMappable<BookingDto>
     {
         public int Id { get; set; }
         public DateTime DateFrom { get; set; }
@@ -13,5 +14,10 @@ namespace GymApi.Models
         public string ClientId { get; set; }
         [ForeignKey("ClientId")]
         public GymUser Client { get; set; }
+
+        public BookingDto MapToDto()
+        {
+            return new BookingDto(Client.MapToDto(), Trainer.MapToDto(), DateFrom, DateTo, Id);
+        }
     }
 }

@@ -43,7 +43,7 @@ namespace GymApi.Controllers
 
             if (!createdUserResult.Succeeded)
             {
-                return BadRequest("Could not create a user");
+                return BadRequest(createdUserResult.Errors.ToString());
             }
 
             await _userManager.AddToRoleAsync(newUser, Roles.User);

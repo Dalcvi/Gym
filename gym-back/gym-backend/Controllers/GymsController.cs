@@ -22,6 +22,7 @@ namespace GymApi.Controllers
 
         // GET: api/Gyms
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Gym>>> GetGyms()
         {
             return await _context.Gyms.ToListAsync();
@@ -29,6 +30,7 @@ namespace GymApi.Controllers
 
         // GET: api/Gyms/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Gym>> GetGym(int id)
         {
             var gym = await _context.Gyms.FindAsync(id);

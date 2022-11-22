@@ -2,13 +2,13 @@ import { Loading, Table, Text } from '@nextui-org/react';
 import { useQuery } from 'react-query';
 import { useOutletContext } from 'react-router-dom';
 import { AdminDashboardContext } from '../admin-dashboard-context.types';
-import { Booking } from './bookings.types';
+import { Booking } from '../bookings-table/bookings.types';
 
-export const BookingTable = () => {
+export const UserBookingsTable = () => {
   const { accessToken } = useOutletContext<AdminDashboardContext>();
   const bookingsQuery = useQuery<Booking[]>('bookings', async () => {
     const bookings = await (
-      await fetch('https://localhost:7030/api/bookings', {
+      await fetch('https://localhost:7030/api/user/c067582e-57e1-47c3-bdd6-09e0e8c29ae4/bookings', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

@@ -1,7 +1,9 @@
+import { GymUser } from "../users-table/users-table.types";
+
 export type Booking = {
     id: number;
     dateFrom: string;
     dateTo: string;
-    clientId: string;
-    trainerId: string;
+    client: GymUser;
+    trainer: GymUser;
 }

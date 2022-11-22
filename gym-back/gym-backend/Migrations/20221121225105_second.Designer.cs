@@ -11,14 +11,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymApi.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    [Migration("20221030233737_UpdatedUser")]
-    partial class UpdatedUser
+    [Migration("20221121225105_second")]
+    partial class second
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("GymApi.Models.Benefit", b =>
@@ -82,65 +83,20 @@ namespace GymApi.Migrations
 
             modelBuilder.Entity("GymApi.Models.GymTrainer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
                     b.Property<int>("GymId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("varchar(95)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("GymId");
+                    b.HasKey("GymId", "UserId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("GymTrainers");
                 });
 
-            modelBuilder.Entity("GymApi.Models.Plan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<double>("CurrentPrice")
-                        .HasColumnType("double");
-
-                    b.Property<double>("OriginalPrice")
-                        .HasColumnType("double");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Plans");
-                });
-
-            modelBuilder.Entity("GymApi.Models.PlanBenefit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("BenefitId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlanId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BenefitId");
-
-                    b.HasIndex("PlanId");
-
-                    b.ToTable("PlanBenefits");
-                });
-
-            modelBuilder.Entity("GymApi.Models.User", b =>
+            modelBuilder.Entity("GymApi.Models.GymUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(95)");
@@ -196,7 +152,7 @@ namespace GymApi.Migrations
                     b.Property<DateTime>("PlanEnd")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("PlanId")
+                    b.Property<int?>("PlanId")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
@@ -221,6 +177,53 @@ namespace GymApi.Migrations
                     b.HasIndex("PlanId");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("GymApi.Models.Plan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<double>("CurrentPrice")
+                        .HasColumnType("double");
+
+                    b.Property<double>("OriginalPrice")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plans");
+                });
+
+            modelBuilder.Entity("GymApi.Models.PlanBenefit", b =>
+                {
+                    b.Property<int>("PlanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BenefitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlanId", "BenefitId");
+
+                    b.HasIndex("BenefitId");
+
+                    b.ToTable("PlanBenefits");
+                });
+
+            modelBuilder.Entity("GymApi.Models.UserBooking", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(95)");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "BookingId");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("UserBookings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -353,13 +356,13 @@ namespace GymApi.Migrations
 
             modelBuilder.Entity("GymApi.Models.Booking", b =>
                 {
-                    b.HasOne("GymApi.Models.User", "Client")
+                    b.HasOne("GymApi.Models.GymUser", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GymApi.Models.User", "Trainer")
+                    b.HasOne("GymApi.Models.GymUser", "Trainer")
                         .WithMany()
                         .HasForeignKey("TrainerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -378,7 +381,7 @@ namespace GymApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GymApi.Models.User", "User")
+                    b.HasOne("GymApi.Models.GymUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -387,6 +390,15 @@ namespace GymApi.Migrations
                     b.Navigation("Gym");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GymApi.Models.GymUser", b =>
+                {
+                    b.HasOne("GymApi.Models.Plan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId");
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("GymApi.Models.PlanBenefit", b =>
@@ -408,15 +420,23 @@ namespace GymApi.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("GymApi.Models.User", b =>
+            modelBuilder.Entity("GymApi.Models.UserBooking", b =>
                 {
-                    b.HasOne("GymApi.Models.Plan", "Plan")
+                    b.HasOne("GymApi.Models.Booking", "Booking")
                         .WithMany()
-                        .HasForeignKey("PlanId")
+                        .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Plan");
+                    b.HasOne("GymApi.Models.GymUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -430,7 +450,7 @@ namespace GymApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("GymApi.Models.User", null)
+                    b.HasOne("GymApi.Models.GymUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -439,7 +459,7 @@ namespace GymApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("GymApi.Models.User", null)
+                    b.HasOne("GymApi.Models.GymUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -454,7 +474,7 @@ namespace GymApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GymApi.Models.User", null)
+                    b.HasOne("GymApi.Models.GymUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -463,7 +483,7 @@ namespace GymApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("GymApi.Models.User", null)
+                    b.HasOne("GymApi.Models.GymUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

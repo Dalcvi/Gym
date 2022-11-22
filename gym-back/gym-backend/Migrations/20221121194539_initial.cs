@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GymApi.Migrations
 {
-    public partial class Initial : Migration
+    /// <inheritdoc />
+    public partial class initial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
@@ -108,14 +110,12 @@ namespace GymApi.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(95)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserType = table.Column<int>(type: "int", nullable: false),
                     FirstName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LastName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Age = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    PlanId = table.Column<int>(type: "int", nullable: false),
+                    PlanId = table.Column<int>(type: "int", nullable: true),
                     PlanEnd = table.Column<DateTime>(type: "datetime", nullable: false),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -147,8 +147,7 @@ namespace GymApi.Migrations
                         name: "FK_AspNetUsers_Plans_PlanId",
                         column: x => x.PlanId,
                         principalTable: "Plans",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -156,14 +155,12 @@ namespace GymApi.Migrations
                 name: "PlanBenefits",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     PlanId = table.Column<int>(type: "int", nullable: false),
                     BenefitId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlanBenefits", x => x.Id);
+                    table.PrimaryKey("PK_PlanBenefits", x => new { x.PlanId, x.BenefitId });
                     table.ForeignKey(
                         name: "FK_PlanBenefits_Benefits_BenefitId",
                         column: x => x.BenefitId,
@@ -316,15 +313,13 @@ namespace GymApi.Migrations
                 name: "GymTrainers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     GymId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "varchar(95)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GymTrainers", x => x.Id);
+                    table.PrimaryKey("PK_GymTrainers", x => new { x.GymId, x.UserId });
                     table.ForeignKey(
                         name: "FK_GymTrainers_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -393,11 +388,6 @@ namespace GymApi.Migrations
                 column: "TrainerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GymTrainers_GymId",
-                table: "GymTrainers",
-                column: "GymId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GymTrainers_UserId",
                 table: "GymTrainers",
                 column: "UserId");
@@ -406,13 +396,9 @@ namespace GymApi.Migrations
                 name: "IX_PlanBenefits_BenefitId",
                 table: "PlanBenefits",
                 column: "BenefitId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PlanBenefits_PlanId",
-                table: "PlanBenefits",
-                column: "PlanId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
