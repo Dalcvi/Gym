@@ -1,4 +1,5 @@
-﻿using GymApi.Models;
+﻿using System.Reflection.Metadata;
+using GymApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +24,6 @@ namespace GymApi.Context
 
             optionsBuilder.UseMySql(configuration["ConnectionStrings:DatabaseConnectionString"], new MySqlServerVersion(new Version(1, 0, 0)));
         }
-
     }
 }
 

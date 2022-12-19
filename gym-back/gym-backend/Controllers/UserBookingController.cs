@@ -26,6 +26,8 @@ namespace GymApi.Controllers
             {
                 return NotFound();
             }
+
+
             var userBookings = await _context.UserBookings
                 .Where(userBooking => userBooking.UserId.Equals(userId))
                 .Include(userBooking => userBooking.Booking).ThenInclude(booking => booking.Client)

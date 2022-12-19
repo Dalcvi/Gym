@@ -1,4 +1,5 @@
-﻿using GymApi.Auth;
+﻿using System.Security.Claims;
+using GymApi.Auth;
 using GymApi.Dtos;
 using GymApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -71,7 +72,25 @@ namespace GymApi.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var accessToken = _jwtTokenService.CreateAccessToken(user.Email, user.Id, roles);
 
-            return Ok(new SuccessfulLoginDto(accessToken));
+            return Ok(new SuccessfulLoginDto(accessToken, user.MapToDto(), roles));
+        }
+
+        [Authorize(Roles = Roles.User)]
+        [HttpGet]
+        [Route("token-login")]
+        public async Task<IActionResult> TokenLogin()
+        {
+            ClaimsPrincipal currentUser = this.User;
+            var userEmail = currentUser.FindFirst(ClaimTypes.Email).Value;
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return BadRequest("Bad token");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var accessToken = _jwtTokenService.CreateAccessToken(user.Email, user.Id, roles);
+            return Ok(new SuccessfulLoginDto(accessToken, user.MapToDto(), roles));
         }
     }
 }

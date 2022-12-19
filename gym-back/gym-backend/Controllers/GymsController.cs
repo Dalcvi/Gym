@@ -47,12 +47,15 @@ namespace GymApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGym(int id, UpdateGymDto gym)
+        public async Task<IActionResult> PutGym(int id, UpdateGymDto updatedGym)
         {
-            if (!GymExists(id))
+            var gym = await _context.Gyms.FindAsync(id);
+            if (gym == null)
             {
                 return BadRequest();
             }
+            gym.Address = updatedGym.Address;
+            gym.ImageUrl = updatedGym.ImageUrl;
 
             _context.Entry(gym).State = EntityState.Modified;
 
@@ -81,7 +84,7 @@ namespace GymApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Gym>> PostGym(CreateGymDto gym)
         {
-            var newGym = new Gym() { Address = gym.Address };
+            var newGym = new Gym() { Address = gym.Address, ImageUrl = gym.ImageUrl };
             _context.Gyms.Add(newGym);
             await _context.SaveChangesAsync();
 

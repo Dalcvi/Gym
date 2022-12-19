@@ -5,21 +5,44 @@ import {
   GymsTable,
   PlansTable,
   UsersTable,
+  BookingTable,
+  GymTrainersTable,
+  PlansBenefitsTable,
+  UserBookingsTable,
 } from '../admin-dashboard-page';
-import { BookingTable } from '../admin-dashboard-page/bookings-table';
-import { GymTrainersTable } from '../admin-dashboard-page/gym-trainers-table';
-import { PlansBenefitsTable } from '../admin-dashboard-page/plan-benefits-table';
-import { UserBookingsTable } from '../admin-dashboard-page/user-bookings-table';
 import { HomePage } from '../home-page';
 import { LocationsPage } from '../locations-page';
+import { RouteNames } from './route-names.const';
+import { NavBar } from '../nav-bar';
+import { AuthorizedUserProvider, UserProfile } from '../user';
+import { GymTrainersPage } from '../gym-trainers-page';
+import { TrainerPage } from '../trainer-page';
 
 export const Router = () => {
   return (
     <BrowserRouter>
+      <NavBar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/locations" element={<LocationsPage />} />
-        <Route path="/admin-dashboard" element={<AdminDashboardPage />}>
+        <Route path={RouteNames.Home.path} element={<HomePage />} />
+        <Route path={RouteNames.Locations.path} element={<LocationsPage />} />
+        <Route path={RouteNames.Locations.children.Trainers.path} element={<GymTrainersPage />} />
+        <Route path={RouteNames.Trainer.path} element={<TrainerPage />} />
+        <Route
+          path={RouteNames.Profile.path}
+          element={
+            <AuthorizedUserProvider>
+              <UserProfile />
+            </AuthorizedUserProvider>
+          }
+        />
+        <Route
+          path={RouteNames.AdminDashboard.path}
+          element={
+            <AuthorizedUserProvider>
+              <AdminDashboardPage />
+            </AuthorizedUserProvider>
+          }
+        >
           <Route index element={<UsersTable />} />
           <Route path="users" element={<UsersTable />} />
           <Route path="gym-trainers" element={<GymTrainersTable />} />

@@ -52,7 +52,7 @@ namespace GymApi.Controllers
         [Authorize(Roles = Roles.User)]
         public async Task<IActionResult> PutBooking(int id, UpdateBookingDto bookingUpdate)
         {
-            var booking = _context.Bookings.Find(id);
+            var booking = await _context.Bookings.FindAsync(id);
 
             var authResult = await authorizationService.AuthorizeAsync(User, booking, Policies.ContentOwner);
             if (!authResult.Succeeded)
@@ -60,7 +60,10 @@ namespace GymApi.Controllers
                 return Forbid();
             }
 
-            _context.Entry(bookingUpdate).State = EntityState.Modified;
+            booking.DateFrom = bookingUpdate.DateFrom;
+            booking.DateTo = bookingUpdate.DateTo;
+
+            _context.Entry(booking).State = EntityState.Modified;
 
             try
             {
@@ -89,15 +92,16 @@ namespace GymApi.Controllers
         {
             var client = await _context.Users.FirstOrDefaultAsync((user) => user.Id == booking.ClientId);
             if (client == null)
-                NotFound();
+                return NotFound();
             var trainer = await _context.Users.FirstOrDefaultAsync((user) => user.Id == booking.TrainerId);
             if (trainer == null)
-                NotFound();
+                return NotFound();
 
-            var requestUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var requestUserId = User.Claims.Where(c => c.Type == "sub").FirstOrDefault().Value;
+
             if (!(requestUserId == booking.ClientId || requestUserId == booking.TrainerId))
             {
-                Forbid();
+                return Forbid();
             }
 
 
@@ -112,6 +116,7 @@ namespace GymApi.Controllers
 
         // DELETE: api/Bookings/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.User)]
         public async Task<IActionResult> DeleteBooking(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
@@ -120,12 +125,14 @@ namespace GymApi.Controllers
                 return NotFound();
             }
 
-            var authResult = await authorizationService.AuthorizeAsync(User, booking, Policies.ContentOwner);
-            if (!authResult.Succeeded)
+            var userId = User.Claims.Where(c => c.Type == "sub").FirstOrDefault().Value;
+
+            if (!(userId == booking.ClientId || userId == booking.TrainerId))
             {
                 return Forbid();
             }
 
+            _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
 
             return NoContent();

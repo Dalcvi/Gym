@@ -1,4 +1,5 @@
-﻿using GymApi.Context;
+﻿using GymApi.Auth;
+using GymApi.Context;
 using GymApi.Dtos;
 using GymApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,35 +23,41 @@ namespace GymApi.Controllers
         [HttpGet]
         [AllowAnonymous]
 
-        public async Task<ActionResult<IEnumerable<Plan>>> GetPlans()
+        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlans()
         {
-            return await _context.Plans.ToListAsync();
+            return await _context.Plans.Include(plan => plan.Benefits).ThenInclude(planBenefit => planBenefit.Benefit).Select(plan => plan.MapToDto()).ToListAsync();
+                
         }
 
         // GET: api/Plans/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Plan>> GetPlan(int id)
+        public async Task<ActionResult<PlanDto>> GetPlan(int id)
         {
-            var plan = await _context.Plans.FindAsync(id);
+            var plan = await _context.Plans.Include(plan => plan.Benefits.Select(planBenefit => planBenefit.Benefit)).FirstOrDefaultAsync(plan => plan.Id == id);
 
             if (plan == null)
             {
                 return NotFound();
             }
 
-            return plan;
+            return plan.MapToDto();
         }
 
         // PUT: api/Plans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPlan(int id, UpdatePlanDto plan)
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> PutPlan(int id, UpdatePlanDto updatedPlan)
         {
-            if (!PlanExists(id))
+            var plan = await _context.Plans.FindAsync(id);
+            if (plan == null)
             {
                 return BadRequest();
             }
+            plan.CurrentPrice = updatedPlan.CurrentPrice;
+            plan.OriginalPrice = updatedPlan.OriginalPrice;
+            plan.Title = updatedPlan.Title;
 
             _context.Entry(plan).State = EntityState.Modified;
 
@@ -76,9 +83,10 @@ namespace GymApi.Controllers
         // POST: api/Plans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<ActionResult<Plan>> PostPlan(CreatePlanDto plan)
         {
-            var newPlan = new Plan() { OriginalPrice = plan.OriginalPrice, CurrentPrice = plan.CurrentPrice };
+            var newPlan = new Plan() { Title= plan.Title, OriginalPrice = plan.OriginalPrice, CurrentPrice = plan.CurrentPrice };
             _context.Plans.Add(newPlan);
             await _context.SaveChangesAsync();
 
@@ -86,6 +94,7 @@ namespace GymApi.Controllers
         }
 
         // DELETE: api/Plans/5
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePlan(int id)
         {
@@ -94,6 +103,9 @@ namespace GymApi.Controllers
             {
                 return NotFound();
             }
+
+            var usersWithPlan = _context.Users.Where(user => user.PlanId == id).ToList();
+            usersWithPlan.ForEach(user => { user.PlanId = null; });
 
             _context.Plans.Remove(plan);
             await _context.SaveChangesAsync();

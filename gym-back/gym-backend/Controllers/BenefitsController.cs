@@ -48,12 +48,15 @@ namespace GymApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> PutBenefit(int id, UpdateBenefitDto benefit)
+        public async Task<IActionResult> PutBenefit(int id, UpdateBenefitDto updatedBenefit)
         {
-            if (BenefitExists(id))
+            var benefit = await _context.Benefits.FindAsync(id);
+            if (benefit == null)
             {
                 return BadRequest();
             }
+
+            benefit.Name = updatedBenefit.Name;
 
             _context.Entry(benefit).State = EntityState.Modified;
 

@@ -1,5 +1,5 @@
 ﻿namespace GymApi.Dtos
 {
-    public record CreateGymDto(string Address);
-    public record UpdateGymDto(string Address);
+    public record CreateGymDto(string Address, string ImageUrl);
+    public record UpdateGymDto(string Address, string ImageUrl);
 }

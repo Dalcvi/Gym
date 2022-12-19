@@ -1,9 +1,12 @@
 ﻿using GymApi.Context;
 using GymApi.Dtos;
 using GymApi.Models;
+using GymApi.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace GymApi.Controllers
 {
@@ -12,10 +15,15 @@ namespace GymApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly GymDbContext _context;
+        private readonly IAuthorizationService authService;
+        private readonly UserManager<GymUser> _userManager;
 
-        public UsersController(GymDbContext context)
+
+        public UsersController(GymDbContext context, UserManager<GymUser> userManager, IAuthorizationService authorizationService)
         {
             _context = context;
+            authService = authorizationService;
+            _userManager = userManager;
         }
 
         // GET: api/Users
@@ -46,32 +54,44 @@ namespace GymApi.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGymUser(string id, GymUser gymUser)
+        public async Task<IActionResult> PutGymUser(string id, UpdateUserDto gymUser)
         {
-            if (id != gymUser.Id)
+            ClaimsPrincipal currentUser = this.User;
+            if(currentUser == null)
             {
-                return BadRequest();
+                return BadRequest("Bad token");
+            }
+            var userEmail = currentUser.FindFirst(ClaimTypes.Email).Value;
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return BadRequest("Bad token");
             }
 
-            _context.Entry(gymUser).State = EntityState.Modified;
-
-            try
+            if (user.Id != id)
             {
-                await _context.SaveChangesAsync();
+                return Forbid();
             }
-            catch (DbUpdateConcurrencyException)
+
+            user.FirstName = gymUser.FirstName;
+            user.LastName = gymUser.LastName;
+            user.Age = gymUser.Age;
+            user.AvatarUrl = gymUser.AvatarUrl;
+            if(gymUser.PlanId != null && user.PlanId != gymUser.PlanId)
             {
-                if (!GymUserExists(id))
+                var plan = await _context.Plans.FindAsync(gymUser.PlanId);
+                if (plan != null)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    user.Plan = plan;
+                    DateTime now = new DateTime();
+                    DateTime yearLater = now.AddYears(1);
+                    user.PlanEnd = yearLater;
                 }
             }
 
-            return NoContent();
+            _context.GymUsers.Update(user);
+            await _context.SaveChangesAsync();
+            return Ok(user.MapToDto());
         }
 
         // DELETE: api/Users/5

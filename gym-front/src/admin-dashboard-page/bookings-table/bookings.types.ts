@@ -1,9 +1,9 @@
-import { GymUser } from "../users-table/users-table.types";
+import { User } from "../../user";
 
 export type Booking = {
     id: number;
     dateFrom: string;
     dateTo: string;
-    client: GymUser;
-    trainer: GymUser;
+    client: User;
+    trainer: User;
 }

@@ -9,8 +9,13 @@ namespace GymApi.Auth
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceOwnerRequirement requirement,
     IUserOwnedResource resource)
         {
+            var id = context.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            
             if (context.User.IsInRole(Roles.Admin) ||
-                context.User.FindFirstValue(JwtRegisteredClaimNames.Sub) == resource.UserId)
+                id == resource.UserId ||
+                id == resource.ClientId ||
+                id == resource.TrainerId)
+
             {
                 context.Succeed(requirement);
             }

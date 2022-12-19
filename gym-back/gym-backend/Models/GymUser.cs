@@ -13,10 +13,11 @@ namespace GymApi.Models
         public int? PlanId { get; set; }
         public Plan? Plan { get; set; }
         public DateTime PlanEnd { get; set; }
+        public string? AvatarUrl { get; set; }
 
         public UserDto MapToDto()
         {
-            return new UserDto(Id, Email, FirstName, LastName, Age, PlanId, PlanEnd);
+            return new UserDto(Id, Email, FirstName, LastName, Age, PlanId, PlanEnd, AvatarUrl);
         }
     }
 }

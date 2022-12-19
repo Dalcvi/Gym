@@ -20,7 +20,7 @@ appBuilder.Services.AddCors(options =>
     options.AddPolicy(name: "SpecificOrigin",
                       builder =>
                       {
-                          builder.WithOrigins("http://localhost:3000").AllowAnyHeader();
+                          builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
                       });
 });
 
@@ -28,6 +28,11 @@ appBuilder.Services.AddCors(options =>
 appBuilder.Services.AddIdentity<GymUser, IdentityRole>(options =>
     {
         options.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = true;
+        options.Password.RequiredLength = 6;
     })
     .AddEntityFrameworkStores<GymDbContext>()
     .AddDefaultTokenProviders();
@@ -58,7 +63,7 @@ appBuilder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(Policies.ContentOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
 });
-appBuilder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
+appBuilder.Services.AddScoped<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
 
 appBuilder.Services.AddSwaggerGen(swagger =>
 {

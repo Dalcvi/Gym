@@ -1,0 +1,61 @@
+.grid {
+  display: grid;
+  width: 100%;
+  position: relative;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+}
+
+.cell {
+  height: 30px;
+  background-color: rgb(226, 193, 238);
+  border-bottom: 1px solid black;
+}
+.cell:first-of-type {
+  border-top: 1px solid black;
+}
+
+.column {
+  border-right: 1px solid black;
+}
+
+.column:first-of-type {
+  border-left: 1px solid black;
+}
+
+.floatingTime {
+  position: absolute;
+  background-color: rgba(238, 255, 178, 0.76);
+}
+
+.hoursContainer {
+  position: absolute;
+  top: -6px;
+  left: -20px;
+  margin: 0;
+  text-align: end;
+}
+
+.hour {
+  margin: 0;
+  height: 30px;
+}
+
+.dates {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  margin: 0;
+}
+.timeTable {
+  width: 100%;
+}
+
+.clickableTime {
+  background-color: rgb(61, 184, 255);
+}
+
+.clickableTime:hover {
+  cursor: pointer;
+  box-shadow: 0 8px 8px 0px rgb(255, 255, 255);
+}
